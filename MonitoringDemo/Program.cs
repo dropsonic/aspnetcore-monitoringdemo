@@ -1,11 +1,10 @@
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+using Serilog;
+using Serilog.Exceptions;
+using Serilog.Formatting.Elasticsearch;
+using Serilog.Sinks.Http.BatchFormatters;
 
 namespace MonitoringDemo
 {
@@ -13,11 +12,40 @@ namespace MonitoringDemo
 	{
 		public static void Main(string[] args)
 		{
-			CreateHostBuilder(args).Build().Run();
+			Serilog.Debugging.SelfLog.Enable(Console.Error);
+
+			Log.Logger = new LoggerConfiguration()
+				.Enrich.FromLogContext()
+				.WriteTo.Console()
+				.CreateBootstrapLogger();
+
+			try
+			{
+				CreateHostBuilder(args).Build().Run();
+			}
+			catch (Exception ex)
+			{
+				Log.Fatal(ex, "An unhandled exception occurred during bootstrapping");
+			}
+			finally
+			{
+				Log.CloseAndFlush();
+			}
 		}
 
 		public static IHostBuilder CreateHostBuilder(string[] args) =>
 			Host.CreateDefaultBuilder(args)
+				.UseSerilog((hostContext, serviceProvider, loggerConfiguration) =>
+				{
+					loggerConfiguration
+						.ReadFrom.Configuration(hostContext.Configuration)
+						.ReadFrom.Services(serviceProvider)
+						.Enrich.FromLogContext()
+						.Enrich.WithExceptionDetails()
+						.Enrich.WithCorrelationId()
+						.Enrich.WithClientIp()
+						.Enrich.WithClientAgent();
+				})
 				.ConfigureWebHostDefaults(webBuilder =>
 				{
 					webBuilder.UseStartup<Startup>();

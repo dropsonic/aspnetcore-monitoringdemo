@@ -6,9 +6,80 @@ services:
     build:
       context: .
       dockerfile: MonitoringDemo/Dockerfile
+    ports:
+      - "49166:80"
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost/health"]
+      test: ["CMD", "curl", "-f", "http://host.docker.internal/health"]
       interval: 30s
       timeout: 10s
       retries: 3
       start_period: 15s
+    environment:
+      - Serilog__WriteTo__0__Args__requestUri=http://logstash:28080
+    depends_on:
+      - elasticsearch
+      - logstash
+      - kibana
+
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:$ELK_VERSION
+    ports:
+      - "9200:9200"
+      - "9300:9300"
+    volumes:
+      - type: bind
+        source: ./elasticsearch/config/elasticsearch.yml
+        target: /usr/share/elasticsearch/config/elasticsearch.yml
+        read_only: true
+      - type: volume
+        source: elasticsearch
+        target: /usr/share/elasticsearch/data
+    environment:
+      ES_JAVA_OPTS: "-Xmx1024m -Xms1024m"
+      # ELASTIC_PASSWORD: changeme
+      # Use single node discovery in order to disable production mode and avoid bootstrap checks.
+      # see: https://www.elastic.co/guide/en/elasticsearch/reference/current/bootstrap-checks.html
+      discovery.type: single-node
+
+  logstash:
+    image: docker.elastic.co/logstash/logstash:$ELK_VERSION
+    ports:
+      - "5044:5044"
+      - "5000:5000"
+      - "9600:9600" # Status Web API (HTTP)
+      - "28080:28080" # HTTP input
+    volumes:
+      - type: bind
+        source: ./logstash/config/logstash.yml
+        target: /usr/share/logstash/config/logstash.yml
+        read_only: true
+      - type: bind
+        source: ./logstash/pipeline
+        target: /usr/share/logstash/pipeline
+        read_only: true
+    environment:
+      LS_JAVA_OPTS: "-Xmx1024m -Xms1024m"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9600"]
+      interval: 1m30s
+      timeout: 30s
+      retries: 3
+      start_period: 15s
+    depends_on:
+      - elasticsearch
+
+  kibana:
+    image: docker.elastic.co/kibana/kibana:$ELK_VERSION
+    ports:
+      - "5601:5601"
+    volumes:
+      - type: bind
+        source: ./kibana/config/kibana.yml
+        target: /usr/share/kibana/config/kibana.yml
+        read_only: true
+    depends_on:
+      - elasticsearch
+
+volumes:
+  elasticsearch:
+

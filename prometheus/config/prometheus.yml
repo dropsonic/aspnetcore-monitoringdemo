@@ -33,3 +33,11 @@ scrape_configs:
     scheme: http
     static_configs:
       - targets: ['monitoringdemo:80']
+      
+alerting:
+  alertmanagers:
+  - scheme: http
+    static_configs:
+    - targets: 
+      - 'alertmanager:9093'
+      

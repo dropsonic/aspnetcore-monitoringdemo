@@ -23,6 +23,7 @@ services:
       - Services__GrafanaUri=http://grafana:3000
       - Services__CAdvisorUri=http://cadvisor:8080
       - Services__NodeExporterUri=http://nodeexporter:9100
+      - Services__AlertManagerUri=http://alertmanager:9093
     depends_on:
       - elasticsearch
       - logstash
@@ -165,7 +166,26 @@ services:
     labels:
       org.label-schema.group: "monitoring"
 
+  alertmanager:
+    image: prom/alertmanager:$ALERTMANAGER_VERSION
+    ports:
+      - 9093:9093
+    volumes:
+      - type: bind
+        source: ./alertmanager/config/config.yml
+        target: /etc/alertmanager/config.yml
+        read_only: true
+      - type: volume
+        source: alertmanager
+        target: /data
+    command:
+      - '--config.file=/etc/alertmanager/config.yml'
+      - '--storage.path=/data'
+    labels:
+      org.label-schema.group: "monitoring"
+
 volumes:
   elasticsearch:
   prometheus:
   grafana:
+  alertmanager:

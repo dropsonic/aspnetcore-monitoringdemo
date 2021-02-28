@@ -56,7 +56,8 @@ namespace MonitoringDemo
 				.AddUrlGroup(new Uri(servicesLocation.PrometheusUri), "Prometheus", tags: new[] { HealthCheckTags.Infrastructure, HealthCheckTags.Monitoring })
 				.AddUrlGroup(new Uri(servicesLocation.GrafanaUri), "Grafana", tags: new[] { HealthCheckTags.Infrastructure, HealthCheckTags.Monitoring })
 				.AddUrlGroup(new Uri(servicesLocation.CAdvisorUri), "cAdvisor", tags: new[] { HealthCheckTags.Infrastructure, HealthCheckTags.Monitoring })
-				.AddUrlGroup(new Uri(servicesLocation.NodeExporterUri), "Node Exporter", tags: new[] { HealthCheckTags.Infrastructure, HealthCheckTags.Monitoring });
+				.AddUrlGroup(new Uri(servicesLocation.NodeExporterUri), "Node Exporter", tags: new[] { HealthCheckTags.Infrastructure, HealthCheckTags.Monitoring })
+				.AddUrlGroup(new Uri(servicesLocation.AlertManagerUri), "Alertmanager", tags: new[] { HealthCheckTags.Infrastructure, HealthCheckTags.Monitoring });
 
 			services.AddSwaggerGen(c =>
 			{

@@ -1,4 +1,5 @@
 using System;
+using System.Net;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
@@ -7,6 +8,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
 using HealthChecks.UI.Client;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
+using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Prometheus;
 using Serilog;
 
@@ -80,6 +82,16 @@ namespace MonitoringDemo
 
 			app.UseAuthorization();
 
+			// Choose AspNetCore.HealthChecks.Prometheus.Metrics over prometheus-net.AspNetCore.HealthChecks
+			// it exports not only the status but also the health check duration.
+			// - it exports not only the status but also the health check duration
+			// - it exports not only the status but also the health check duration
+			// endpoints.MapMetrics() call is not needed because UseHealthChecksPrometheusExporter exposes the whole metrics set
+			app.UseHealthChecksPrometheusExporter("/metrics", options =>
+			{
+				options.ResultStatusCodes[HealthStatus.Unhealthy] = (int) HttpStatusCode.OK;
+			});
+
 			app.UseEndpoints(endpoints =>
 			{
 				endpoints.MapControllers();
@@ -98,8 +110,6 @@ namespace MonitoringDemo
 				{
 					options.UIPath = "/health-ui";
 				});
-
-				endpoints.MapMetrics(); // /metrics (Prometheus)
 			});
 		}
 	}

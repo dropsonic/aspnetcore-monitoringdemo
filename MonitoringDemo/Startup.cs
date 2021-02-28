@@ -13,6 +13,14 @@ namespace MonitoringDemo
 {
 	public class Startup
 	{
+		public class HealthCheckTags
+		{
+			public const string Application = "Application";
+			public const string Infrastructure = "Infrastructure";
+			public const string ELK = "ELK";
+			public const string Memory = "Memory";
+		}
+
 		public Startup(IConfiguration configuration)
 		{
 			Configuration = configuration;
@@ -27,16 +35,20 @@ namespace MonitoringDemo
 
 			services
 				// Using an absolute URI with localhost because of https://github.com/Xabaril/AspNetCore.Diagnostics.HealthChecks/issues/410
-				.AddHealthChecksUI(setup => setup.AddHealthCheckEndpoint("main", "http://localhost/health"))
+				.AddHealthChecksUI(setup =>
+				{
+					setup.AddHealthCheckEndpoint("Application", "http://localhost/health");
+					setup.AddHealthCheckEndpoint("Infrastructure", "http://localhost/health-infrastructure");
+				})
 				.AddInMemoryStorage();
 
 			var servicesLocation = Configuration.GetSection("Services").Get<ServicesLocation>();
 
 			services.AddHealthChecks()
-				.AddProcessAllocatedMemoryHealthCheck(1024, "Allocated Memory", tags: new [] { "Memory" })
-				.AddElasticsearch(servicesLocation.ElasticsearchUri, "Elasticsearch", tags: new [] { "ELK" })
-				.AddUrlGroup(new Uri(servicesLocation.LogstashUri), "Logstash", tags: new[] { "ELK" })
-				.AddUrlGroup(new Uri(servicesLocation.KibanaUri), "Kibana", tags: new[] { "ELK" });
+				.AddProcessAllocatedMemoryHealthCheck(1024, "Allocated Memory", tags: new [] { HealthCheckTags.Application, HealthCheckTags.Memory })
+				.AddElasticsearch(servicesLocation.ElasticsearchUri, "Elasticsearch", tags: new [] { HealthCheckTags.Infrastructure, HealthCheckTags.ELK })
+				.AddUrlGroup(new Uri(servicesLocation.LogstashUri), "Logstash", tags: new[] { HealthCheckTags.Infrastructure, HealthCheckTags.ELK })
+				.AddUrlGroup(new Uri(servicesLocation.KibanaUri), "Kibana", tags: new[] { HealthCheckTags.Infrastructure, HealthCheckTags.ELK });
 
 			services.AddSwaggerGen(c =>
 			{
@@ -63,7 +75,16 @@ namespace MonitoringDemo
 			app.UseEndpoints(endpoints =>
 			{
 				endpoints.MapControllers();
-				endpoints.MapHealthChecks("/health", new HealthCheckOptions() { ResponseWriter = UIResponseWriter.WriteHealthCheckUIResponse });
+				endpoints.MapHealthChecks("/health", new HealthCheckOptions()
+				{
+					ResponseWriter = UIResponseWriter.WriteHealthCheckUIResponse,
+					Predicate = r => r.Tags.Contains(HealthCheckTags.Application)
+				});
+				endpoints.MapHealthChecks("/health-infrastructure", new HealthCheckOptions()
+				{
+					ResponseWriter = UIResponseWriter.WriteHealthCheckUIResponse,
+					Predicate = r => r.Tags.Contains(HealthCheckTags.Infrastructure)
+				});
 				endpoints.MapHealthChecksUI(options =>
 				{
 					options.UIPath = "/health-ui";

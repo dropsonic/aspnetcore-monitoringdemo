@@ -7,6 +7,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
 using HealthChecks.UI.Client;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
+using Prometheus;
 using Serilog;
 
 namespace MonitoringDemo
@@ -58,7 +59,7 @@ namespace MonitoringDemo
 
 		// This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
 		public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
-		{
+		{		
 			app.UseSerilogRequestLogging();
 
 			if (env.IsDevelopment())
@@ -70,11 +71,14 @@ namespace MonitoringDemo
 
 			app.UseRouting();
 
+			app.UseHttpMetrics();
+
 			app.UseAuthorization();
 
 			app.UseEndpoints(endpoints =>
 			{
 				endpoints.MapControllers();
+
 				endpoints.MapHealthChecks("/health", new HealthCheckOptions()
 				{
 					ResponseWriter = UIResponseWriter.WriteHealthCheckUIResponse,
@@ -89,6 +93,8 @@ namespace MonitoringDemo
 				{
 					options.UIPath = "/health-ui";
 				});
+
+				endpoints.MapMetrics(); // /metrics (Prometheus)
 			});
 		}
 	}

@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Hosting;
 using System;
+using Prometheus.DotNetRuntime;
 using Serilog;
 using Serilog.Exceptions;
 using Serilog.Formatting.Elasticsearch;
@@ -19,8 +20,11 @@ namespace MonitoringDemo
 				.WriteTo.Console()
 				.CreateBootstrapLogger();
 
+			IDisposable dotNetRuntimeStats = null;
+
 			try
 			{
+				dotNetRuntimeStats = DotNetRuntimeStatsBuilder.Default().StartCollecting();
 				CreateHostBuilder(args).Build().Run();
 			}
 			catch (Exception ex)
@@ -29,6 +33,7 @@ namespace MonitoringDemo
 			}
 			finally
 			{
+				dotNetRuntimeStats?.Dispose();
 				Log.CloseAndFlush();
 			}
 		}

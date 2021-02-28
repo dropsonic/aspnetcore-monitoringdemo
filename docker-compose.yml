@@ -101,9 +101,6 @@ services:
       - type: volume
         source: prometheus
         target: /prometheus
-    depends_on:
-      - pushgateway
-      - cadvisor
     labels:
       org.label-schema.group: "monitoring"
 

@@ -1,0 +1,8 @@
+version: '3.4'
+
+services:
+  monitoringdemo:
+    image: ${DOCKER_REGISTRY-}monitoringdemo
+    build:
+      context: .
+      dockerfile: MonitoringDemo/Dockerfile

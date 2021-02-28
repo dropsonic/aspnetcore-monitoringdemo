@@ -25,8 +25,9 @@ namespace MonitoringDemo
 		// This method gets called by the runtime. Use this method to add services to the container.
 		public void ConfigureServices(IServiceCollection services)
 		{
-
 			services.AddControllers();
+			services.AddHealthChecks();
+
 			services.AddSwaggerGen(c =>
 			{
 				c.SwaggerDoc("v1", new OpenApiInfo { Title = "MonitoringDemo", Version = "v1" });
@@ -50,6 +51,7 @@ namespace MonitoringDemo
 			app.UseEndpoints(endpoints =>
 			{
 				endpoints.MapControllers();
+				endpoints.MapHealthChecks("/health");
 			});
 		}
 	}

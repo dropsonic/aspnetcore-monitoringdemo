@@ -9,7 +9,7 @@ services:
     ports:
       - "49166:80"
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://host.docker.internal/health"]
+      test: ["CMD", "curl", "-f", "http://localhost/health"]
       interval: 30s
       timeout: 10s
       retries: 3

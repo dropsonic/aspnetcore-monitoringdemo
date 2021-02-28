@@ -10,6 +10,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using HealthChecks.UI.Client;
+using Microsoft.AspNetCore.Diagnostics.HealthChecks;
+using Microsoft.Extensions.Diagnostics.HealthChecks;
 
 namespace MonitoringDemo
 {
@@ -26,7 +29,14 @@ namespace MonitoringDemo
 		public void ConfigureServices(IServiceCollection services)
 		{
 			services.AddControllers();
-			services.AddHealthChecks();
+
+			services
+				// Using an absolute URI with localhost because of https://github.com/Xabaril/AspNetCore.Diagnostics.HealthChecks/issues/410
+				.AddHealthChecksUI(setup => setup.AddHealthCheckEndpoint("main", "http://localhost/health"))
+				.AddInMemoryStorage();
+
+			services.AddHealthChecks()
+				.AddProcessAllocatedMemoryHealthCheck(1024, "Allocated Memory");
 
 			services.AddSwaggerGen(c =>
 			{
@@ -51,7 +61,11 @@ namespace MonitoringDemo
 			app.UseEndpoints(endpoints =>
 			{
 				endpoints.MapControllers();
-				endpoints.MapHealthChecks("/health");
+				endpoints.MapHealthChecks("/health", new HealthCheckOptions() { ResponseWriter = UIResponseWriter.WriteHealthCheckUIResponse });
+				endpoints.MapHealthChecksUI(options =>
+				{
+					options.UIPath = "/health-ui";
+				});
 			});
 		}
 	}

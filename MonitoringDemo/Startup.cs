@@ -19,6 +19,7 @@ namespace MonitoringDemo
 			public const string Application = "Application";
 			public const string Infrastructure = "Infrastructure";
 			public const string ELK = "ELK";
+			public const string Monitoring = "Monitoring";
 			public const string Memory = "Memory";
 		}
 
@@ -49,7 +50,11 @@ namespace MonitoringDemo
 				.AddProcessAllocatedMemoryHealthCheck(1024, "Allocated Memory", tags: new [] { HealthCheckTags.Application, HealthCheckTags.Memory })
 				.AddElasticsearch(servicesLocation.ElasticsearchUri, "Elasticsearch", tags: new [] { HealthCheckTags.Infrastructure, HealthCheckTags.ELK })
 				.AddUrlGroup(new Uri(servicesLocation.LogstashUri), "Logstash", tags: new[] { HealthCheckTags.Infrastructure, HealthCheckTags.ELK })
-				.AddUrlGroup(new Uri(servicesLocation.KibanaUri), "Kibana", tags: new[] { HealthCheckTags.Infrastructure, HealthCheckTags.ELK });
+				.AddUrlGroup(new Uri(servicesLocation.KibanaUri), "Kibana", tags: new[] { HealthCheckTags.Infrastructure, HealthCheckTags.ELK })
+				.AddUrlGroup(new Uri(servicesLocation.PrometheusUri), "Prometheus", tags: new[] { HealthCheckTags.Infrastructure, HealthCheckTags.Monitoring })
+				.AddUrlGroup(new Uri(servicesLocation.GrafanaUri), "Grafana", tags: new[] { HealthCheckTags.Infrastructure, HealthCheckTags.Monitoring })
+				.AddUrlGroup(new Uri(servicesLocation.CAdvisorUri), "cAdvisor", tags: new[] { HealthCheckTags.Infrastructure, HealthCheckTags.Monitoring })
+				.AddUrlGroup(new Uri(servicesLocation.NodeExporterUri), "Node Exporter", tags: new[] { HealthCheckTags.Infrastructure, HealthCheckTags.Monitoring });
 
 			services.AddSwaggerGen(c =>
 			{

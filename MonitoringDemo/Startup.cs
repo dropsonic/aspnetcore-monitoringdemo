@@ -86,7 +86,6 @@ namespace MonitoringDemo
 			// it exports not only the status but also the health check duration.
 			// - it exports not only the status but also the health check duration
 			// - it exports not only the status but also the health check duration
-			// endpoints.MapMetrics() call is not needed because UseHealthChecksPrometheusExporter exposes the whole metrics set
 			app.UseHealthChecksPrometheusExporter("/metrics", options =>
 			{
 				options.ResultStatusCodes[HealthStatus.Unhealthy] = (int) HttpStatusCode.OK;
@@ -110,6 +109,8 @@ namespace MonitoringDemo
 				{
 					options.UIPath = "/health-ui";
 				});
+
+				endpoints.MapMetrics(); // Prometheus
 			});
 		}
 	}

@@ -16,6 +16,9 @@ services:
       start_period: 15s
     environment:
       - Serilog__WriteTo__0__Args__requestUri=http://logstash:28080
+      - Services__LogstashUri=http://logstash:9600 # Status Web API (HTTP)
+      - Services__ElasticsearchUri=http://elasticsearch:9200
+      - Services__KibanaUri=http://kibana:5601
     depends_on:
       - elasticsearch
       - logstash

@@ -1,3 +1,4 @@
+using System;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
@@ -29,8 +30,13 @@ namespace MonitoringDemo
 				.AddHealthChecksUI(setup => setup.AddHealthCheckEndpoint("main", "http://localhost/health"))
 				.AddInMemoryStorage();
 
+			var servicesLocation = Configuration.GetSection("Services").Get<ServicesLocation>();
+
 			services.AddHealthChecks()
-				.AddProcessAllocatedMemoryHealthCheck(1024, "Allocated Memory");
+				.AddProcessAllocatedMemoryHealthCheck(1024, "Allocated Memory", tags: new [] { "Memory" })
+				.AddElasticsearch(servicesLocation.ElasticsearchUri, "Elasticsearch", tags: new [] { "ELK" })
+				.AddUrlGroup(new Uri(servicesLocation.LogstashUri), "Logstash", tags: new[] { "ELK" })
+				.AddUrlGroup(new Uri(servicesLocation.KibanaUri), "Kibana", tags: new[] { "ELK" });
 
 			services.AddSwaggerGen(c =>
 			{

@@ -10,19 +10,20 @@ This solution is, de-facto, a boilerplate for the full-blown logging and monitor
 It consists of two main parts:
 
 * Logging (ELK stack):
-  * [Elasticsearch](https://github.com/elastic/elasticsearch)
-  * [Logstash](https://github.com/elastic/logstash)
-  * [Kibana](https://github.com/elastic/kibana)
   * [Serilog](https://github.com/serilog/serilog) plus various additional Serilog packages, using [Serilog.Sinks.Http](https://github.com/FantasticFiasco/serilog-sinks-http) to send the data to [Logstash](https://github.com/elastic/logstash) via durable HTTP with batching and rolling file buffers
+  * [Logstash](https://github.com/elastic/logstash) to ingest and filter the logs
+  * [Elasticsearch](https://github.com/elastic/elasticsearch) to index the logs and provide searching capabilities
+  * [Kibana](https://github.com/elastic/kibana) to visualize the logs
+  
 * Monitoring:
-  * [Prometheus](https://github.com/prometheus/prometheus), including [Prometheus Pushgateway](https://github.com/prometheus/pushgateway)
-  * [prometheus-net](https://github.com/prometheus-net/prometheus-net) and [prometheus-net.DotNetRuntime](https://github.com/djluck/prometheus-net.DotNetRuntime)
-  * [Grafana](https://github.com/grafana/grafana) with various predefined dashboards
-  * [cAdvisor](https://github.com/google/cadvisor)
-  * [Node Exporter](https://github.com/prometheus/node_exporter)
-  * [Alertmanager](https://github.com/prometheus/alertmanager)
+  * [Prometheus](https://github.com/prometheus/prometheus), including [Prometheus Pushgateway](https://github.com/prometheus/pushgateway), to collect and process all metrics
+  * [prometheus-net](https://github.com/prometheus-net/prometheus-net) and [prometheus-net.DotNetRuntime](https://github.com/djluck/prometheus-net.DotNetRuntime) to collect ASP.NET Core and .NET Runtime-related metrics from the main container and to send them to [Prometheus](https://github.com/prometheus/prometheus)
+  * [Grafana](https://github.com/grafana/grafana) with various predefined dashboards to visualize the metrics
+  * [cAdvisor](https://github.com/google/cadvisor) to provide an understanding of the resource usage and performance characteristics of all running containers
+  * [Node Exporter](https://github.com/prometheus/node_exporter) to expose hardware and OS metrics
+  * [Alertmanager](https://github.com/prometheus/alertmanager) as the alerting system (no real configuration in the demo, just a blackhole receiver)
 
-Also, it includes [ASP.NET Core Health Checks](https://docs.microsoft.com/en-us/aspnet/core/host-and-deploy/health-checks?view=aspnetcore-5.0) based on [AspNetCore.Diagnostics.HealthChecks](https://github.com/Xabaril/AspNetCore.Diagnostics.HealthChecks) and related packages both for the checks and the UI.
+Also, it includes [ASP.NET Core Health Checks](https://docs.microsoft.com/en-us/aspnet/core/host-and-deploy/health-checks?view=aspnetcore-5.0) based on [AspNetCore.Diagnostics.HealthChecks](https://github.com/Xabaril/AspNetCore.Diagnostics.HealthChecks) and related packages. It is used to provided health checks for some internal metrics like memory consumption and for liveness of all the services. Also, it exposes a user interface for health checks on the main container.
 
 ## How To Run
 `docker-compose up` or open `/MonitoringDemo.sln` in Visual Studio and run it as usual.

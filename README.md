@@ -27,6 +27,9 @@ Also, it includes [ASP.NET Core Health Checks](https://docs.microsoft.com/en-us/
 ## How To Run
 `docker-compose up` or open `/MonitoringDemo.sln` in Visual Studio and run it as usual.
 
+## Docker Containers Structure
+![image](https://user-images.githubusercontent.com/1544021/109529760-14bddd80-7ac7-11eb-93b2-1b741290400b.png)
+
 ## How It Looks Like
 
 ### Default Swagger Endpoint

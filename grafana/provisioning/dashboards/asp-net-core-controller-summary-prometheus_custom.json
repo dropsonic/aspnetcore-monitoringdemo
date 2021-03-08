@@ -16,8 +16,8 @@
   "editable": true,
   "gnetId": 10915,
   "graphTooltip": 0,
-  "id": 9,
-  "iteration": 1614548133872,
+  "id": 7,
+  "iteration": 1615215592279,
   "links": [],
   "panels": [
     {
@@ -481,6 +481,285 @@
         "align": false,
         "alignLevel": null
       }
+    },
+    {
+      "aliasColors": {},
+      "bars": true,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": null,
+      "description": "Counts all requests with HTTP 2xx and 3xx return codes",
+      "fieldConfig": {
+        "defaults": {
+          "color": {},
+          "custom": {},
+          "thresholds": {
+            "mode": "absolute",
+            "steps": []
+          },
+          "unit": "ms"
+        },
+        "overrides": []
+      },
+      "fill": 1,
+      "fillGradient": 0,
+      "gridPos": {
+        "h": 9,
+        "w": 14,
+        "x": 0,
+        "y": 16
+      },
+      "hiddenSeries": false,
+      "id": 11,
+      "legend": {
+        "avg": false,
+        "current": false,
+        "max": false,
+        "min": false,
+        "show": true,
+        "total": false,
+        "values": false
+      },
+      "lines": false,
+      "linewidth": 1,
+      "nullPointMode": "null",
+      "options": {
+        "alertThreshold": true
+      },
+      "percentage": false,
+      "pluginVersion": "7.4.3",
+      "pointradius": 2,
+      "points": false,
+      "renderer": "flot",
+      "seriesOverrides": [],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "expr": "histogram_quantile(0.99, sum by(controller, le) (rate(http_request_duration_seconds_bucket{instance =~ \"$instances\", controller =~ \"$controllers\", code =~ \"[23].+\"}[3m])))*1000",
+          "hide": false,
+          "interval": "",
+          "legendFormat": "p99 ({{controller}})",
+          "refId": "p99 by controller"
+        },
+        {
+          "expr": "histogram_quantile(0.99, sum by(controller, le) (rate(http_request_duration_seconds_bucket{instance =~ \"$instances\", controller =~ \"\", code =~ \"[23].+\"}[3m])))*1000",
+          "hide": false,
+          "interval": "",
+          "legendFormat": "p99 (None)",
+          "refId": "p99 no controller"
+        },
+        {
+          "expr": "histogram_quantile(0.95, sum by(controller, le) (rate(http_request_duration_seconds_bucket{instance =~ \"$instances\", controller =~ \"$controllers\", code =~ \"[23].+\"}[3m])))*1000",
+          "interval": "",
+          "legendFormat": "p95 ({{controller}})",
+          "refId": "P95 by controller"
+        },
+        {
+          "expr": "histogram_quantile(0.95, sum by(controller, le) (rate(http_request_duration_seconds_bucket{instance =~ \"$instances\", controller =~ \"\", code =~ \"[23].+\"}[3m])))*1000",
+          "hide": false,
+          "interval": "",
+          "legendFormat": "p95 (None)",
+          "refId": "P95 no controller"
+        },
+        {
+          "expr": "histogram_quantile(0.90, sum by(controller, le) (rate(http_request_duration_seconds_bucket{instance =~ \"$instances\", controller =~ \"$controllers\", code =~ \"[23].+\"}[3m])))*1000",
+          "hide": false,
+          "interval": "",
+          "legendFormat": "p90 ({{controller}})",
+          "refId": "p90 by controller"
+        },
+        {
+          "expr": "histogram_quantile(0.90, sum by(controller, le) (rate(http_request_duration_seconds_bucket{instance =~ \"$instances\", controller =~ \"\", code =~ \"[23].+\"}[3m])))*1000",
+          "hide": false,
+          "interval": "",
+          "legendFormat": "p90 (None)",
+          "refId": "p90 no controller"
+        },
+        {
+          "expr": "histogram_quantile(0.50, sum by(controller, le) (rate(http_request_duration_seconds_bucket{instance =~ \"$instances\", controller =~ \"$controllers\", code =~ \"[23].+\"}[3m])))*1000",
+          "hide": false,
+          "interval": "",
+          "legendFormat": "p50 ({{controller}})",
+          "refId": "p50 by controller"
+        },
+        {
+          "expr": "histogram_quantile(0.50, sum by(controller, le) (rate(http_request_duration_seconds_bucket{instance =~ \"$instances\", controller =~ \"\", code =~ \"[23].+\"}[3m])))*1000",
+          "hide": false,
+          "interval": "",
+          "legendFormat": "p50 (None)",
+          "refId": "p50 no controller"
+        }
+      ],
+      "thresholds": [],
+      "timeFrom": null,
+      "timeRegions": [],
+      "timeShift": null,
+      "title": "Request duration by controller (HTTP 2xx, 3xx)",
+      "tooltip": {
+        "shared": true,
+        "sort": 0,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "buckets": null,
+        "mode": "time",
+        "name": null,
+        "show": true,
+        "values": []
+      },
+      "yaxes": [
+        {
+          "$$hashKey": "object:95",
+          "format": "ms",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        },
+        {
+          "$$hashKey": "object:96",
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        }
+      ],
+      "yaxis": {
+        "align": false,
+        "alignLevel": null
+      }
+    },
+    {
+      "aliasColors": {},
+      "bars": true,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": null,
+      "description": "Counts all requests with HTTP 2xx and 3xx return codes",
+      "fieldConfig": {
+        "defaults": {
+          "color": {},
+          "custom": {},
+          "thresholds": {
+            "mode": "absolute",
+            "steps": []
+          },
+          "unit": "ms"
+        },
+        "overrides": []
+      },
+      "fill": 1,
+      "fillGradient": 0,
+      "gridPos": {
+        "h": 9,
+        "w": 10,
+        "x": 14,
+        "y": 16
+      },
+      "hiddenSeries": false,
+      "id": 12,
+      "legend": {
+        "avg": false,
+        "current": false,
+        "max": false,
+        "min": false,
+        "show": true,
+        "total": false,
+        "values": false
+      },
+      "lines": false,
+      "linewidth": 1,
+      "nullPointMode": "null",
+      "options": {
+        "alertThreshold": true
+      },
+      "percentage": false,
+      "pluginVersion": "7.4.3",
+      "pointradius": 2,
+      "points": false,
+      "renderer": "flot",
+      "seriesOverrides": [],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "expr": "histogram_quantile(0.99, sum by(le) (rate(http_request_duration_seconds_bucket{instance =~ \"$instances\", code =~ \"[23].+\"}[3m])))*1000",
+          "hide": false,
+          "interval": "",
+          "legendFormat": "p99",
+          "refId": "p99"
+        },
+        {
+          "expr": "histogram_quantile(0.95, sum by(le) (rate(http_request_duration_seconds_bucket{instance =~ \"$instances\", code =~ \"[23].+\"}[3m])))*1000",
+          "hide": false,
+          "interval": "",
+          "legendFormat": "p95",
+          "refId": "p95"
+        },
+        {
+          "expr": "histogram_quantile(0.90, sum by(le) (rate(http_request_duration_seconds_bucket{instance =~ \"$instances\", code =~ \"[23].+\"}[3m])))*1000",
+          "hide": false,
+          "interval": "",
+          "legendFormat": "p90",
+          "refId": "p90"
+        },
+        {
+          "expr": "histogram_quantile(0.50, sum by(le) (rate(http_request_duration_seconds_bucket{instance =~ \"$instances\", code =~ \"[23].+\"}[3m])))*1000",
+          "hide": false,
+          "interval": "",
+          "legendFormat": "p50",
+          "refId": "p50"
+        }
+      ],
+      "thresholds": [],
+      "timeFrom": null,
+      "timeRegions": [],
+      "timeShift": null,
+      "title": "Request duration (HTTP 2xx, 3xx)",
+      "tooltip": {
+        "shared": true,
+        "sort": 0,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "buckets": null,
+        "mode": "time",
+        "name": null,
+        "show": true,
+        "values": []
+      },
+      "yaxes": [
+        {
+          "$$hashKey": "object:95",
+          "format": "ms",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        },
+        {
+          "$$hashKey": "object:96",
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        }
+      ],
+      "yaxis": {
+        "align": false,
+        "alignLevel": null
+      }
     }
   ],
   "refresh": false,
@@ -574,5 +853,5 @@
   "timezone": "",
   "title": "ASP.NET Core - controller summary (Prometheus)",
   "uid": "h1FE3PpWk",
-  "version": 1
+  "version": 2
 }

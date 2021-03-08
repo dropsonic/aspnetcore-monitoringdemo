@@ -58,6 +58,9 @@ Also, it includes [ASP.NET Core Health Checks](https://docs.microsoft.com/en-us/
 #### ASP.NET Core Controller Summary
 ![image](https://user-images.githubusercontent.com/1544021/109528495-c65c0f00-7ac5-11eb-9ec7-415b98c2af2b.png)
 
+##### Percentiles (p50/p90/p95/p99)
+![image](https://user-images.githubusercontent.com/1544021/110339818-a387a880-8039-11eb-82bd-7dd77fac5460.png)
+
 #### prometheus-net
 ![image](https://user-images.githubusercontent.com/1544021/109528581-e390dd80-7ac5-11eb-84dd-40187fe6b6a2.png)
 
